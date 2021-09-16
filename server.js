@@ -40,26 +40,13 @@ app.get("/", (req, res) => {
 });
 
 app.post("/", (req, res) => {
-  console.log("fuck");
-  console.log(req.body);
-
   let entry = {};
   entry["feeling"] = req.body.feeling;
   entry["date"] = req.body.newDate;
-  fetch(`https://api.openweathermap.org/data/2.5/weather?zip=${req.body.zip}&units=metric&appid=${API_KEY}`)
-    .then((res) => {
-      return res.json();
-    })
-    .then((data) => {
-      console.log(data);
 
-      entry["temp"] = data.main.temp;
-      projectData.push(entry);
-      return res.redirect("http://localhost:5000");
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  entry["temp"] = req.body.temp;
+  projectData.push(entry);
+  return res.redirect("http://localhost:5000");
 });
 
 app.get("/pd", (req, res) => {

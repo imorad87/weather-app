@@ -8,9 +8,18 @@ const tempElement = document.querySelector("#temp");
 const contentElement = document.querySelector("#content");
 const errorElement = document.querySelector("#error");
 
-// Create a new date instance dynamically with JS
+const API_KEY = "a1edb8224b82873a5d0d57b7d24df3a7";
 
-submitBtn.addEventListener("click", (e) => {
+function getTempreature(apiKey) {
+  return fetch(`https://api.openweathermap.org/data/2.5/weather?zip=${zipField.value}&units=metric&appid=${apiKey}`)
+    .then((res) => res.json())
+    .then((data) => data.main.temp)
+    .catch((err) => {
+      console.log(err);
+    });
+}
+
+const handleSubmit = async (e) => {
   e.preventDefault();
   if (!zipField.value || !textArea.value) {
     errorElement.innerHTML = "<span class='err'>Please enter a zip code and a feeling.</span>";
@@ -21,12 +30,16 @@ submitBtn.addEventListener("click", (e) => {
     }, 3500);
     return;
   }
+  let temp = 0;
+  console.log("inside submit");
+  await getTempreature(API_KEY).then((data) => {
+    temp = data;
+  });
 
   let d = new Date();
-  let newDate = d.getMonth() + "." + d.getDate() + "." + d.getFullYear();
+  let newDate = d.getMonth() + 1 + "." + d.getDate() + "." + d.getFullYear();
   const feeling = textArea.value;
   const zip = zipField.value;
-  console.log("zip", zip);
 
   fetch("http://localhost:5000", {
     method: "POST",
@@ -38,6 +51,7 @@ submitBtn.addEventListener("click", (e) => {
       newDate,
       feeling,
       zip,
+      temp,
     }),
   })
     .then(() => {
@@ -48,10 +62,11 @@ submitBtn.addEventListener("click", (e) => {
     .catch((err) => {
       errorElement.innerHTML = err.message;
     });
-});
+};
+
+submitBtn.addEventListener("click", handleSubmit);
 
 window.addEventListener("load", (e) => {
-  console.log("inside page load");
   e.preventDefault();
   fetch("http://localhost:5000/pd")
     .then((res) => res.json())
