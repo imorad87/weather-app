@@ -13,8 +13,6 @@ const express = require("express");
 const { exit } = require("process");
 const app = express();
 
-const API_KEY = "a1edb8224b82873a5d0d57b7d24df3a7";
-
 let projectData = [];
 
 /* Dependencies */
